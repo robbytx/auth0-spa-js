@@ -11,22 +11,19 @@ const excludeFiles = [
 ];
 
 module.exports = {
+  name: '@auth0/auth0-spa-js',
   out: './docs/',
   readme: './README.MD',
-  includes: './src',
+  entryPoints: 'src',
   exclude: [
-    '**/__tests__/**/*',
-    '**/cypress/**/*',
-    '**/node_modules/**/*',
-    '**/__mocks__/**/*',
-    'src/worker/**/*',
+    '**/__tests__/**',
+    '**/cypress/**',
+    '**/node_modules/**',
+    '**/__mocks__/**',
     ...excludeFiles.map(f => `./src/${f}.ts`)
   ],
-  mode: 'file',
+  externalPattern: ['**/node_modules/**'],
   excludeExternals: true,
   excludePrivate: true,
-  includeDeclarations: true,
-  stripInternal: true,
-  hideGenerator: true,
-  theme: 'minimal'
+  hideGenerator: true
 };
