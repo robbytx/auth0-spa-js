@@ -9,6 +9,7 @@ import webWorkerLoader from 'rollup-plugin-web-worker-loader';
 import replace from '@rollup/plugin-replace';
 import analyze from 'rollup-plugin-analyzer';
 import dev from 'rollup-plugin-dev';
+import csp from 'koa-csp';
 import { createApp } from './scripts/oidc-provider';
 
 import pkg from './package.json';
@@ -78,6 +79,23 @@ let bundles = [
           dirs: ['dist', 'static'],
           port: serverPort,
           extend(app, modules) {
+            app.use(csp({
+              enableWarn: true,
+              policy: {
+                'default-src': ['self', 'ws://localhost:35729'],
+                'style-src': ['self',
+                  'https://stackpath.bootstrapcdn.com',
+                  'unsafe-inline', /* for demo */
+                ],
+                'script-src': ['self',
+                  'http://localhost:35729',
+                  'https://cdn.jsdelivr.net',
+                  "'sha256-J//UXYk+juFDMC3Sigv2AtNlcUYV4ePFk7I2Sa+nJac='", /* <script> in index.html */
+                  'unsafe-eval', /* required by Vue template compiler */
+                ],
+                'frame-src': ['self', 'https://brucke.auth0.com']
+              },
+            }));
             app.use(modules.mount(createApp({ port: serverPort })));
           }
         }),
